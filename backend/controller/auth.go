@@ -80,6 +80,8 @@ func Login (w http.ResponseWriter, r *http.Request){
 
 }
 
+//signup 
+
 func Signup(w http.ResponseWriter, r *http.Request){
 
       var user model.User
@@ -122,4 +124,45 @@ func Signup(w http.ResponseWriter, r *http.Request){
 
   w.WriteHeader(http.StatusCreated)
   fmt.Fprintf(w, "User created successfully")
+}
+
+//Home 
+
+func Home(w http.ResponseWriter, r *http.Request) {
+  // Check for presence of "token" cookie
+  cookie, err := r.Cookie("token")
+  if err != nil {
+    if err == http.ErrNoCookie {
+      // Handle missing cookie case (e.g., redirect to login)
+      fmt.Fprintf(w, "Missing authentication token")
+      return
+    }
+    // Handle other cookie errors
+    w.WriteHeader(http.StatusInternalServerError)
+    fmt.Fprintf(w, "Error retrieving cookie: %v", err)
+    return
+  }
+
+  // Parse the token from the cookie
+  claims, err := utils.ParseToken(cookie.Value)
+  if err != nil {
+    w.WriteHeader(http.StatusUnauthorized)
+    fmt.Fprintf(w, "Invalid token: %v", err)
+    return
+  }
+
+  // Validate user role
+  if !(claims.Role == "user" || claims.Role == "admin") {
+    w.WriteHeader(http.StatusUnauthorized)
+    fmt.Fprintf(w, "Unauthorized access: Invalid role")
+    return
+  }
+
+  // Access granted, send response
+  w.WriteHeader(http.StatusOK)
+  response := map[string]string{
+    "success": "home page",
+    "role":    claims.Role,
+  }
+  json.NewEncoder(w).Encode(response)
 }
