@@ -10,7 +10,8 @@ import (
 
 
 
-func main(){
+func AuthRoutes(){
+
 	mux := http.NewServeMux()
 
 	//Login route

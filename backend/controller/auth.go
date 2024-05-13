@@ -89,6 +89,7 @@ func Signup(w http.ResponseWriter, r *http.Request){
     fmt.Fprintf(w, "Method not allowed: %s", r.Method)
     return
    }
+
  decoder := json.NewDecoder(r.Body)
  if err := decoder.Decode(&user)
  err != nil{
@@ -96,4 +97,29 @@ func Signup(w http.ResponseWriter, r *http.Request){
    fmt.Fprintf(w, "Error decoding request body: %v", err)
     return
  }  
+
+ hashedPassword, err := utils.GenerateHashPassword(user.Password)
+   if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
+    fmt.Fprintf(w, "Error hashing password: %v", err)
+    return
+  }
+  user.Password = hashedPassword
+ // Save user to database
+ if err := model.DB.Create(&user).Error; 
+  err != nil{
+     w.WriteHeader(http.StatusInternalServerError)
+    fmt.Fprintf(w, "Error saving user: %v", err)
+    return
+  }
+
+    if err != nil {
+    // Handle signup error
+    w.WriteHeader(http.StatusInternalServerError)
+    fmt.Fprintf(w, "Error saving user: %v", err)
+    return
+  }
+
+  w.WriteHeader(http.StatusCreated)
+  fmt.Fprintf(w, "User created successfully")
 }
