@@ -12,4 +12,6 @@ import (
 func AuthRoutes(mux *http.ServeMux){
 //Login route
 mux.HandleFunc("/login", controller.Login)
+mux.HandleFunc("/signup", controller.Signup)
+mux.HandleFunc("/home", controller.Home)
 }
