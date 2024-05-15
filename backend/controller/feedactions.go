@@ -64,20 +64,30 @@ func CreateFeedBack(w http.ResponseWriter, r *http.Request){
 	  fmt.Fprintf(w, "Method not allowed: %s", r.Method)
     return
 	}
-	//struct to represent the expected request body
-	type getFeedBackRequest struct{
- 		Title   string `json:"title"`
-		Category string `json:"category"`
-		Detail   string `json:"detail"`
-	}
-    
-	var getFeedbackRequest getFeedBackRequest
 
-	encode := json.NewEncoder(w)
-	if err := encode.Encode(&getFeedbackRequest);
-	err != nil{
-	w.WriteHeader(http.StatusBadRequest)
-    fmt.Fprintf(w, "Error encoding request body: %v", err)
+    var feedbacks []model.Feedback
+
+	err := model.DB.Find(&feedbacks).Error
+	if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
+    fmt.Fprintf(w, "Error retrieving feedback: %v", err)
     return
-	}
+    }
+
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(feedbacks); err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
+    fmt.Fprintf(w, "Error encoding feedback: %v", err)
+    return
+  }
+	
+}
+
+func GetFeedBackById(w http.ResponseWriter, r *http.Request){
+     if r.Method != http.MethodGet{
+	  w.WriteHeader(http.StatusMethodNotAllowed)
+	  fmt.Fprintf(w, "Method not allowed: %s", r.Method)
+      return
+	 }
+
 }

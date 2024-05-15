@@ -19,6 +19,11 @@ type CreateFeedBack struct {
      Category string `json:"category" gorm:"type:enum('features','bug','enhancement')" gorm:"not null"`
      Details string `json:"details"`
 }
+type Feedback struct {
+      Title  string `json: "title"`
+     Category string `json:"category"`
+     Details string `json:"details"`
+}
 
 // LikeFeedback struct represents a user's like on a feedback entry
 type LikeFeedback struct {
