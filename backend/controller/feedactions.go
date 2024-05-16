@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 
@@ -89,5 +90,40 @@ func GetFeedBackById(w http.ResponseWriter, r *http.Request){
 	  fmt.Fprintf(w, "Method not allowed: %s", r.Method)
       return
 	 }
+
+	 	idStr := r.URL.Query().Get("id")
+		if idStr == ""{
+			w.WriteHeader(http.StatusBadRequest)
+		    fmt.Fprintf(w, "Missing required query parameter: id")
+          return
+		}
+		  // Convert string ID to uint (replace with your actual ID type)
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, "Invalid ID format: %v", err)
+			return
+		}
+
+	    var feedbacks []model.Feedback
+
+	    err = model.DB.First(&feedbacks, id).Error
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				fmt.Fprintf(w, "Error retrieving feedback: %v", err)
+				return
+			}
+
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(feedbacks); err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
+    fmt.Fprintf(w, "Error encoding feedback: %v", err)
+    return
+  }
+	
+   
+}
+
+func EditFeedBack(w http.ResponseWriter, r *http.Request){
 
 }
