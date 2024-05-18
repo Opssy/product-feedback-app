@@ -1,7 +1,7 @@
 package model
 
 import (
-	"time"
+	// "time"
 
 	"gorm.io/gorm"
 )
@@ -25,18 +25,18 @@ type Feedback struct {
      Details string `json:"details"`
 }
 
-// LikeFeedback struct represents a user's like on a feedback entry
 type LikeFeedback struct {
     gorm.Model
     UserID  uint 
     FeedbackID uint 
 }
-type PostComment struct{
-     gorm.Model
-     UserID  uint 
-    Comment string `json: "comment"`
-    PostId  uint  `json:"post_id"`
-    CreatedAt time.Time `json:"created_at"`
-    UpdatedAt time.Time `json:"updated_at"`
 
-}
+// type PostComment struct{
+//      gorm.Model
+//      UserID  uint 
+//     Comment string `json: "comment"`
+//     PostId  uint  `json:"post_id"`
+//     CreatedAt time.Time `json:"created_at"`
+//     UpdatedAt time.Time `json:"updated_at"`
+
+// }

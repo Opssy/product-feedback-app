@@ -97,7 +97,7 @@ func GetFeedBackById(w http.ResponseWriter, r *http.Request){
 		    fmt.Fprintf(w, "Missing required query parameter: id")
           return
 		}
-		  // Convert string ID to uint (replace with your actual ID type)
+		// Convert string ID to uint (replace with your actual ID type)
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -125,5 +125,72 @@ func GetFeedBackById(w http.ResponseWriter, r *http.Request){
 }
 
 func EditFeedBack(w http.ResponseWriter, r *http.Request){
+    if r.Method !=  http.MethodPatch{
+	  w.WriteHeader(http.StatusMethodNotAllowed)
+	  fmt.Fprintf(w, "Method not allowed: %s", r.Method)
+      return
+	}
 
+		idStr := r.URL.Query().Get("id")
+		if idStr == ""{
+			w.WriteHeader(http.StatusBadRequest)
+		    fmt.Fprintf(w, "Missing required query parameter: id")
+          return
+		}
+		// Convert string ID to uint (replace with your actual ID type)
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, "Invalid ID format: %v", err)
+			return
+		}
+		 
+		var updatedFeedBack model.Feedback
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&updatedFeedBack);
+		err != nil{
+
+		}
+		 // **2. Find existing feedback by ID:**
+		var existingFeedback model.Feedback
+		err = model.DB.First(&existingFeedback, id).Error
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "Error retrieving feedback: %v", err)
+			return
+		}
+
+
+		existingFeedback.Title = updatedFeedBack.Title
+		existingFeedback.Details = updatedFeedBack.Details
+		existingFeedback.Category = updatedFeedBack.Category
+
+		err = model.DB.Save(&existingFeedback).Error
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "Error saving feedback: %v", err)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "Feedback edited successfully")
+}
+
+func DeleteFeedBack(w http.ResponseWriter, r *http.Request){
+	if r.Method != http.MethodDelete{
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		fmt.Fprintf(w, "Method not allowed: %s", r.Method)
+		return
+	}
+		idStr := r.URL.Query().Get("id")
+		if idStr == ""{
+			w.WriteHeader(http.StatusBadRequest)
+		    fmt.Fprintf(w, "Missing required query parameter: id")
+          return
+		}
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, "Invalid ID format: %v", err)
+			return
+		}
 }
