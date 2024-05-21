@@ -19,7 +19,8 @@ type CreateFeedBack struct {
      Category string `json:"category" gorm:"type:enum('features','bug','enhancement')" gorm:"not null"`
      Details string `json:"details"`
 }
-type Feedback struct {
+type Feedback struct { 
+      ID  int`json:id`
       Title  string `json: "title"`
      Category string `json:"category"`
      Details string `json:"details"`

@@ -193,4 +193,15 @@ func DeleteFeedBack(w http.ResponseWriter, r *http.Request){
 			fmt.Fprintf(w, "Invalid ID format: %v", err)
 			return
 		}
+		result := model.DB.Delete(&model.Feedback{ID:id})
+
+		if result.Error != nil{
+
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error deleting feedback: %v", result.Error)
+		return
+		}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Book deleted successfully"))
+
 }
