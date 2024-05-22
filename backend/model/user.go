@@ -26,6 +26,14 @@ type Feedback struct {
      Details string `json:"details"`
 }
 
+type UpdatedFeedBack struct { 
+      Email    string `gorm:"unique;not null" json:"email"`
+    Password string `json:"password"`
+      ID  int`json:id`
+      Title  string `json: "title"`
+     Category string `json:"category"`
+     Details string `json:"details"`
+}
 type LikeFeedback struct {
     gorm.Model
     UserID  uint 
